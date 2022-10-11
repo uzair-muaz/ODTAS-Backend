@@ -24,5 +24,12 @@ exports.delete = (id) =>{
   })
 })
 }
+exports.deleteImg = (id) =>{
+  return new Promise((resolve) => {
+  cloudinary.v2.uploader.destroy(id,{resource_type:'image'}).then((result)=>{
+    resolve({result});
+  })
+})
+}
 
 // module.exports= cloudinary;

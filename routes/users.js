@@ -4,34 +4,38 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const DroneOperator = require('../Models/DroneOperator');
 const Drone = require('../Models/DroneModel')
+const Image = require('../Models/imageModel')
+const upload= require("../config/multerConfig"),
+cloud = require("../config/cloudinaryConfig");
+imageController = require("../controllers/imageController");
 
 
-const storage = multer.diskStorage({
-  destination: function(req,file, cb){
-    console.log('here')
-    cb(null,'./uploads');
-  },
-  filename: function(req,file, cb){
-      cb(null,  Date.now() +"-"+ file.originalname)
-  }
-})
+// const storage = multer.diskStorage({
+//   destination: function(req,file, cb){
+//     console.log('here')
+//     cb(null,'./uploads');
+//   },
+//   filename: function(req,file, cb){
+//       cb(null, file.originalname)
+//   }
+// })
 
-const fileFilter1 = (req,file,cb)=>{
-  if( file.mimetype === 'image/jpeg'  || file.mimetype ==='image/png'){
-    console.log('in file mime type')
-    cb(null,true);
-  }
-  else{
-    console.log('in false')
-    cb(null,false);
-  }
+// const fileFilter1 = (req,file,cb)=>{
+//   if( file.mimetype === 'image/jpeg'  || file.mimetype ==='image/png' || file.mimetype === 'image/jfif'){
+//     console.log('in file mime type')
+//     cb(null,true);
+//   }
+//   else{
+//     console.log('in false')
+//     cb(null,false);
+//   }
 
-}
+// }
 
-const upload = multer({
-  storage:storage,
- fileFilter: fileFilter1
-})
+// const upload = multer({
+//   storage:storage,
+//  fileFilter: fileFilter1
+// })
 
 /* GET users listing. */
 
@@ -43,29 +47,79 @@ const upload = multer({
 //   })
    
 //  });
+router.post('/addUser', upload.imageUpload.any(),imageController.createImage) 
+  // console.log("file path is "+req.file.path)
+  // const path= "http://localhost:4000/"+req.file.path.replace(/\\/g,"/");
+  // console.log("file path is "+path)
+  // const droneOperator = new DroneOperator({
+  //   UserName: req.body.UserName,
+  //   Password: req.body.Password,
+  //   Email: req.body.Email,
+  //   PhoneNumber: req.body.PhoneNumber,
+  //   Address: req.body.Address,
+  //   Gender: req.body.Gender,
+  //   FullName: req.body.FullName,
+  //   Drone_ID: req.body.DroneID,
+  // })
 
-router.post('/addUser', upload.single('Avatar'),function(req, res, next) {
-  console.log("file path is "+req.file.path)
-  const path= "http://localhost:4000/"+req.file.path.replace(/\\/g,"/");
-  console.log("file path is "+path)
-  const droneOperator = new DroneOperator({
-    UserName: req.body.UserName,
-    Password: req.body.Password,
-    Email: req.body.Email,
-    PhoneNumber: req.body.PhoneNumber,
-    Address: req.body.Address,
-    Gender: req.body.Gender,
-    FullName: req.body.FullName,
-    Avatar: path
-  })
+  // droneOperator.save().then((result)=>{console.log(result); res.status(201); console.log("Operator added Succesfully"); res.json(result)}).catch((error)=>{
+  //   console.log(error);
+  //   res.json(error)
+  // })
 
-  droneOperator.save().then((result)=>{console.log(result); res.status(201); console.log("Operator added Succesfully"); res.json(result)}).catch((error)=>{
-    console.log(error);
-    res.json(error)
-  })
-}); 
+// }); 
+router.post('/addUser/:id', upload.imageUpload.any(), imageController.uploadImage)
 
-router.post('/addDrone', upload.single('Avatar'), async function(req, res, next) {
+  // console.log(req.body.UserName)
+  // if(req.files[0] == undefined){
+  //   console.log('in if update')
+  //   DroneOperator.findByIdAndUpdate({_id:req.params.id},{UserName:req.body.UserName,Address:req.body.Address,FullName:req.body.FullName,PhoneNumber:req.body.PhoneNumber,Email:req.body.Email}).then((results)=>{
+  //     res.json(results);
+  //   }).catch((err)=>{
+  //     res.json(err)
+  //   })
+  // }
+  // else{
+  //   console.log('in else update')
+  //   var OpName = req.body.UserName;
+  //   var OpFullName= req.body.FullName;
+  //   var OpAddress = req.body.Address;
+  //   var OpNumber = req.body.PhoneNumber;
+  //   var OpEmail = req.body.Email; 
+  //  Image.findOneAndDelete({OpID:req.params.id}).then((results)=>{
+  //   cloud.deleteImg(results.id).then((result)=>{
+  //     console.log('Image deleted from cloud');
+  //     console.log('in delete'+OpName);
+  //     cloud.uploads(req.files[0].path).then((image)=>{
+  //       console.log(OpName+"in upload");
+  //       DroneOperator.findByIdAndUpdate({_id:req.params.id},{UserName:OpName,Address:OpAddress,FullName:OpFullName,PhoneNumber:OpNumber,Email:req.body.OpEmail,Avatar:image.url}).then((imageModel)=>{
+  //         let imageDetails = {
+  //           imageName: req.files[0].originalname,
+  //           imageUrl: results.url,
+  //           imageId: results.id,
+  //           OpID: req.params.id
+  //         }
+  //         imageModel
+  //         .create(imageDetails)
+  //         .then((image) => {
+  //           console.log("Operator and Image UpdatedSuccesfully")
+  //         }).catch((err)=>{
+  //           console.log('image creation error'+err)
+  //         })
+  //       }).catch((err)=>{
+  //         console.log('Operator updatation error'+err)
+  //       })
+  //     }).catch((err)=>{
+  //       console.log("cloud upload error"+err);
+  //     })
+  //   }).catch((err)=>{
+  //     console.log('image deletion error'+err);
+  //   })
+  //  })
+    
+  // };
+
+router.post('/addDrone',upload.imageUpload.any(), async function(req, res, next) {
    check = false;
   try{
     
@@ -120,7 +174,7 @@ router.get('/drone',function(req,res,next){
 
 router.get('/',(req,res,next)=>{
 console.log('here')
-  DroneOperator.find().exec((err,results)=>{
+  DroneOperator.find().populate('Drone_ID').exec((err,results)=>{
     if(err){
       console.log(err)
       return(next(err))
@@ -147,31 +201,6 @@ router.delete('/:id',(req,res)=>{
     res.send('deletetion failed')
   })
 })
-
-
-router.put('/addUser/:id', upload.single('Avatar'), function(req, res, next) {
-  console.log(req.file)
-  if(req.file == undefined){
-    console.log('in if update')
-    DroneOperator.findByIdAndUpdate({_id:req.params.id},{UserName:req.body.UserName,Address:req.body.Address,FullName:req.body.FullName,PhoneNumber:req.body.PhoneNumber,Email:req.body.Email}).then((results)=>{
-      res.json(results);
-    }).catch((err)=>{
-      res.json(err)
-    })
-  }
-  else{
-    console.log('in else update')
-    console.log("file path is "+req.file.path)
-    const path= "http://localhost:4000/"+req.file.path.replace(/\\/g,"/");
-    console.log("file path is "+path)
-    
-    DroneOperator.findByIdAndUpdate({_id:req.params.id},{UserName:req.body.UserName,Address:req.body.Address,FullName:req.body.FullName,PhoneNumber:req.body.PhoneNumber,Email:req.body.Email,Avatar:path}).then((results)=>{
-      res.json(results);
-    }).catch((err)=>{
-      res.json(err)
-    })
-  }
-});
 
 
 

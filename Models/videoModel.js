@@ -13,6 +13,9 @@ mongoose.connect('mongodb://localhost/ODTAS');
         type: String,
         unique: true,
       },
+      OpID:{
+        type: mongoose.Types.ObjectId, ref:'DroneOperator'
+      }
     },
     {
       timestamps: true,

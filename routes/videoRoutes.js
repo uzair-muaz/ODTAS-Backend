@@ -6,11 +6,11 @@ cloud = require("../config/cloudinaryConfig");
 const videoController = require("../controllers/videoController"),
   upload = require("../config/multerConfig"),
   router = require("express").Router();
-  delete
+  
 // const cloud = require('../config/cloudinaryConfig');
 
 router
-  .post("/postVideo", upload.videoUpload.any(), videoController.create)
+  .post("/postVideo/:id", upload.videoUpload.any(), videoController.create)
 
 router
   .get('/getVideos',function(req,res,next){

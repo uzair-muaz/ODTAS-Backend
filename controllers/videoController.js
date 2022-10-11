@@ -30,6 +30,7 @@ create: (req, res, next) => {
             name: req.files[0].originalname,
             url: result.url,
             id: result.id,
+            OpID: req.params.id
           });
         })
         .then((result) => {
